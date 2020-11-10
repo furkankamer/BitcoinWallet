@@ -17,15 +17,19 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">#kayit{background-color:white;}
-QPushButton:hover{background-color:red;}</string>
+   <string notr="true">
+QPushButton:hover{background-color:red;}
+QPushButton{
+color:rgb(255, 255, 255);
+background:rgb(0, 255, 127);
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>10</y>
+      <x>110</x>
+      <y>110</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -34,8 +38,7 @@ QPushButton:hover{background-color:red;}</string>
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:rgb(100, 28, 255);
-background:white;</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>Giriş</string>
@@ -53,8 +56,8 @@ background:white;</string>
    <widget class="QPushButton" name="kayit">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>10</y>
+      <x>190</x>
+      <y>110</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -63,7 +66,7 @@ background:white;</string>
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:rgb(100, 28, 255);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>Kayıt</string>
@@ -83,8 +86,8 @@ background:white;</string>
      <rect>
       <x>40</x>
       <y>60</y>
-      <width>47</width>
-      <height>13</height>
+      <width>71</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
@@ -94,7 +97,7 @@ background:white;</string>
    <widget class="QLineEdit" name="lineEdit">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>120</x>
       <y>60</y>
       <width>113</width>
       <height>20</height>
@@ -106,8 +109,8 @@ background:white;</string>
      <rect>
       <x>40</x>
       <y>80</y>
-      <width>47</width>
-      <height>13</height>
+      <width>71</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
@@ -117,24 +120,11 @@ background:white;</string>
    <widget class="QLineEdit" name="lineEdit_2">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>120</x>
       <y>80</y>
       <width>113</width>
       <height>20</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="submit">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>100</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>submit</string>
     </property>
    </widget>
   </widget>
