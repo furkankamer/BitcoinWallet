@@ -4,6 +4,7 @@
 #include<string>
 #include <QSqlDatabase>
 #include <QtSql>
+#include<QDebug>
 
 int onclick = 0;
 MainWindow::MainWindow(QWidget *parent)
@@ -18,27 +19,69 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QString GetDataFromDataBase(QString querystr){
+QSqlQuery RunQuery(QString querystr,QString mode = "read"){
     QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
     db.setHostName("hattie.db.elephantsql.com");
     db.setDatabaseName("lvzhcnac");
     db.setUserName("lvzhcnac");
     db.setPassword("FjnjB28yNrnKOwp_coyq7LABdtIL2iIK");
     bool ok = db.open();
-    QString result = "success";
-    if(!ok)
-         result = "Failed";
-    else{
-        QSqlQuery query;
+    QSqlQuery query;
+    if(ok){
+        qDebug( querystr.toStdString().c_str());
         query.exec(querystr);
-        while(query.next()){
-            result = query.value(0).toString();
-        }
     }
-    return result;
+    return query;
+}
+
+bool SignUp(QString querystr){
+    try {
+        RunQuery(querystr,"write");
+        return true;
+    }  catch (QException exp) {
+        return false;
+    }
+}
+
+bool SignIn(QString querystr){
+    QSqlQuery resultquery = RunQuery(querystr);
+    if(!resultquery.next())
+        return false;
+    return true;
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    ui->pushButton->setText(GetDataFromDataBase("select*from deneme"));
+    QString username = ui->lineEdit->text();
+    QString password = ui->lineEdit_2->text();
+    QString signinquery = "select * from users where username = '"
+            + username + "' and password = '" + password + "'";
+    bool signin = SignIn(signinquery);
+    ui->text->show();
+    if(signin){
+        ui->lineEdit->hide();
+        ui->lineEdit_2->hide();
+        ui->text->setText("success in signin");
+    }
+    else{
+        ui->text->show();
+        ui->text->setText("an error occured");
+    }
+}
+
+void MainWindow::on_kayit_clicked()
+{
+    ui->text->show();
+    QString username = ui->lineEdit->text();
+    QString password = ui->lineEdit_2->text();
+    QString signupquery = "insert into users (username, password) values('"
+            + username + "','" + password + "')";
+    bool signup = SignUp(signupquery);
+    if(signup){
+        ui->text->setText("success in signup");
+    }
+    else{
+        ui->text->show();
+        ui->text->setText("an error occured");
+    }
 }
