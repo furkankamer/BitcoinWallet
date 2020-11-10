@@ -5,7 +5,7 @@
 #include <QSqlDatabase>
 #include <QtSql>
 #include<QDebug>
-
+#define STR_SALT_KEY "12344321"
 int onclick = 0;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -76,6 +76,9 @@ void MainWindow::on_kayit_clicked()
     QString password = ui->lineEdit_2->text();
     QString signupquery = "insert into users (username, password) values('"
             + username + "','" + password + "')";
+    QByteArray pswNsalt (password.toStdString().c_str());
+    pswNsalt.append(STR_SALT_KEY) ;
+    qDebug(QCryptographicHash::hash(pswNsalt, QCryptographicHash::Sha256).toHex());
     bool signup = SignUp(signupquery);
     if(signup){
         ui->text->setText("success in signup");
