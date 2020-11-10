@@ -18,7 +18,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QString GetDataFromDataBase(QString query){
+QString GetDataFromDataBase(QString querystr){
     QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
     db.setHostName("hattie.db.elephantsql.com");
     db.setDatabaseName("lvzhcnac");
@@ -26,12 +26,19 @@ QString GetDataFromDataBase(QString query){
     db.setPassword("FjnjB28yNrnKOwp_coyq7LABdtIL2iIK");
     bool ok = db.open();
     QString result = "success";
-    if(!db.open())
+    if(!ok)
          result = "Failed";
+    else{
+        QSqlQuery query;
+        query.exec(querystr);
+        while(query.next()){
+            result = query.value(0).toString();
+        }
+    }
     return result;
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    ui->pushButton->setText(GetDataFromDataBase("asd"));
+    ui->pushButton->setText(GetDataFromDataBase("select*from deneme"));
 }
