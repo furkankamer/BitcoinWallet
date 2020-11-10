@@ -50,10 +50,16 @@ bool SignIn(QString querystr){
     return true;
 }
 
+std::string getHashedPass(QString password){
+    QByteArray pswNsalt (password.toStdString().c_str());
+    pswNsalt.append(STR_SALT_KEY) ;
+    return QCryptographicHash::hash(pswNsalt, QCryptographicHash::Sha256).toHex().toStdString();
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     QString username = ui->lineEdit->text();
-    QString password = ui->lineEdit_2->text();
+    QString password = QString(getHashedPass(ui->lineEdit_2->text()).c_str());
     QString signinquery = "select * from users where username = '"
             + username + "' and password = '" + password + "'";
     bool signin = SignIn(signinquery);
@@ -73,12 +79,9 @@ void MainWindow::on_kayit_clicked()
 {
     ui->text->show();
     QString username = ui->lineEdit->text();
-    QString password = ui->lineEdit_2->text();
+    QString password = QString(getHashedPass(ui->lineEdit_2->text()).c_str());
     QString signupquery = "insert into users (username, password) values('"
             + username + "','" + password + "')";
-    QByteArray pswNsalt (password.toStdString().c_str());
-    pswNsalt.append(STR_SALT_KEY) ;
-    qDebug(QCryptographicHash::hash(pswNsalt, QCryptographicHash::Sha256).toHex());
     bool signup = SignUp(signupquery);
     if(signup){
         ui->text->setText("success in signup");
