@@ -96,25 +96,28 @@ void MainWindow::on_kayit_clicked()
 
 void MainWindow::on_tabWidget_tabBarClicked(int index)
 {
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(QStringLiteral("http://localhost:8332/"));
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
-    QJsonObject obj;
-    obj["method"] = "getbalance";
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-    QNetworkReply *reply = mgr->post(request, data);
-    QObject::connect(reply, &QNetworkReply::finished, [=](){
-        if(reply->error() == QNetworkReply::NoError){
-            QString contents = QString::fromUtf8(reply->readAll());
-            qDebug() << contents;
-        }
-        else{
-            QString err = reply->errorString();
-            qDebug() << err;
-        }
-        reply->deleteLater();
-    });
+    if(index == 0){
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(QStringLiteral("http://localhost:8332/"));
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
+        QJsonObject obj;
+        obj["method"] = "getbalances";
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        QObject::connect(reply, &QNetworkReply::finished, [=](){
+            if(reply->error() == QNetworkReply::NoError){
+                QString contents = QString::fromUtf8(reply->readAll());
+                qDebug() << contents;
+            }
+            else{
+                QString err = reply->errorString();
+                qDebug() << err;
+            }
+            reply->deleteLater();
+        });
+
+    }
 }
