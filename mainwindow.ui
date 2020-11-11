@@ -22,6 +22,11 @@ QPushButton:hover{background-color:red;}
 QPushButton{
 color:rgb(255, 255, 255);
 background:rgb(0, 255, 127);
+}
+QLabel{
+color:rgb(255, 255, 255);
+background:rgb(0, 255, 127);
+text-align:center;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -146,7 +151,7 @@ background:rgb(0, 255, 127);
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>20</y>
       <width>1021</width>
       <height>271</height>
@@ -161,21 +166,99 @@ background:rgb(0, 255, 127);
        <rect>
         <x>30</x>
         <y>40</y>
-        <width>47</width>
-        <height>14</height>
+        <width>101</width>
+        <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Balance</string>
+       <string>Balance (Trusted)</string>
       </property>
      </widget>
-     <widget class="QLabel" name="BalanceText">
+     <widget class="QLabel" name="BalanceText1">
       <property name="geometry">
        <rect>
-        <x>80</x>
+        <x>140</x>
         <y>40</y>
-        <width>47</width>
-        <height>14</height>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Balance_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>60</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Balance (Untrusted)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Balance_3">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>80</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Balance (Immature)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="Balance_4">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>100</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Balance (Total)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BalanceText2">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>60</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BalanceText3">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>80</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="BalanceText4">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>100</y>
+        <width>81</width>
+        <height>16</height>
        </rect>
       </property>
       <property name="text">

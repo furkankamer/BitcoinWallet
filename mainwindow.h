@@ -21,7 +21,7 @@ private slots:
     void on_kayit_clicked();
 
     void on_tabWidget_tabBarClicked(int index);
-
+    
 private:
     Ui::MainWindow *ui;
 };

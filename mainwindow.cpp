@@ -110,6 +110,16 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         QObject::connect(reply, &QNetworkReply::finished, [=](){
             if(reply->error() == QNetworkReply::NoError){
                 QString contents = QString::fromUtf8(reply->readAll());
+                QJsonDocument jsonResponse = QJsonDocument::fromJson(contents.toUtf8());
+                QJsonObject jsonObject = jsonResponse.object();
+                QJsonObject result = jsonObject["result"].toObject();
+                ui->BalanceText1->setText(QString::number(result["trusted"].toDouble()));
+                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toDouble()));
+                ui->BalanceText3->setText(QString::number(result["immature"].toDouble()));
+                double total = result["trusted"].toDouble()
+                        + result["untrusted_pending"].toDouble()
+                        + result["immature"].toDouble();
+                ui->BalanceText4->setText(QString::number(total));
                 qDebug() << contents;
             }
             else{
