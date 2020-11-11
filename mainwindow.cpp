@@ -109,19 +109,20 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         QNetworkReply *reply = mgr->post(request, data);
         QObject::connect(reply, &QNetworkReply::finished, [=](){
             if(reply->error() == QNetworkReply::NoError){
+                bool ok = false;
                 QString contents = QString::fromUtf8(reply->readAll());
                 QJsonDocument jsonResponse = QJsonDocument::fromJson(contents.toUtf8());
                 QJsonObject jsonObject = jsonResponse.object();
-                QJsonObject result = jsonObject["result"].toObject();
-                qDebug() << QString::number(0.0001000,'d',8);
-                ui->BalanceText1->setText(QString::number(result["trusted"].toDouble(), 'd', 8));
-                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toDouble(), 'd', 8));
-                ui->BalanceText3->setText(QString::number(result["immature"].toDouble(), 'd', 8));
+                QJsonObject result = jsonObject["result"].toObject()["mine"].toObject();
+                ui->BalanceText1->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8));
+                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toVariant().toDouble(&ok), 'd', 8));
+                ui->BalanceText3->setText(QString::number(result["immature"].toVariant().toDouble(&ok), 'd', 8));
                 double total = result["trusted"].toDouble()
                         + result["untrusted_pending"].toDouble()
                         + result["immature"].toDouble();
                 ui->BalanceText4->setText(QString::number(total, 'd', 8));
-                qDebug() << contents;
+                qDebug() << result;
+                qDebug() << ok;
             }
             else{
                 QString err = reply->errorString();
