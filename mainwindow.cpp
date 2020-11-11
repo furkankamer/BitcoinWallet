@@ -3,6 +3,8 @@
 #include <iostream>
 #include<string>
 #include <QSqlDatabase>
+#include<QNetworkReply>
+#include<QNetworkAccessManager>
 #include <QtSql>
 #include<QDebug>
 #define STR_SALT_KEY "12344321"
@@ -90,4 +92,28 @@ void MainWindow::on_kayit_clicked()
         ui->text->show();
         ui->text->setText("an error occured");
     }
+}
+
+void MainWindow::on_tabWidget_tabBarClicked(int index)
+{
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    const QUrl url(QStringLiteral("http://localhost:8332/"));
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj["method"] = "getbalance";
+    QJsonDocument doc(obj);
+    QByteArray data = doc.toJson();
+    QNetworkReply *reply = mgr->post(request, data);
+    QObject::connect(reply, &QNetworkReply::finished, [=](){
+        if(reply->error() == QNetworkReply::NoError){
+            QString contents = QString::fromUtf8(reply->readAll());
+            qDebug() << contents;
+        }
+        else{
+            QString err = reply->errorString();
+            qDebug() << err;
+        }
+        reply->deleteLater();
+    });
 }
