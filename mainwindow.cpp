@@ -113,13 +113,13 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
                 QJsonDocument jsonResponse = QJsonDocument::fromJson(contents.toUtf8());
                 QJsonObject jsonObject = jsonResponse.object();
                 QJsonObject result = jsonObject["result"].toObject();
-                ui->BalanceText1->setText(QString::number(result["trusted"].toDouble(), 'f', 6));
-                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toDouble(), 'f', 6));
-                ui->BalanceText3->setText(QString::number(result["immature"].toDouble(), 'f', 6));
+                ui->BalanceText1->setText(QString::number(result["trusted"].toDouble(), 'e', 8));
+                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toDouble(), 'e', 8));
+                ui->BalanceText3->setText(QString::number(result["immature"].toDouble(), 'e', 8));
                 double total = result["trusted"].toDouble()
                         + result["untrusted_pending"].toDouble()
                         + result["immature"].toDouble();
-                ui->BalanceText4->setText(QString::number(total, 'f', 6));
+                ui->BalanceText4->setText(QString::number(total, 'e', 8));
                 qDebug() << contents;
             }
             else{
