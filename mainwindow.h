@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QJsonObject>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -21,6 +21,11 @@ private slots:
     void on_kayit_clicked();
 
     void on_tabWidget_tabBarClicked(int index);
+    void showBalances(QJsonObject data);
+    void callFunction(std::string funcName,QJsonObject data);
+
+
+    void GetResponse(std::string method, std::string params);
     
 private:
     Ui::MainWindow *ui;

@@ -1,12 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
+#include <functional>
 #include<string>
 #include <QSqlDatabase>
 #include<QNetworkReply>
 #include<QNetworkAccessManager>
 #include <QtSql>
 #include<QDebug>
+#include <QJsonObject>
+#include <QThread>
+#include <map>
+
 #define STR_SALT_KEY "12344321"
 int onclick = 0;
 MainWindow::MainWindow(QWidget *parent)
@@ -15,12 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+std::map<std::string, std::function<void(QJsonObject)>> myMap;
 QSqlQuery RunQuery(QString querystr,QString mode = "read"){
     QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
     db.setHostName("hattie.db.elephantsql.com");
@@ -44,6 +48,7 @@ bool SignUp(QString querystr){
         return false;
     }
 }
+
 
 bool SignIn(QString querystr){
     QSqlQuery resultquery = RunQuery(querystr);
@@ -94,38 +99,45 @@ void MainWindow::on_kayit_clicked()
     }
 }
 
-void MainWindow::on_tabWidget_tabBarClicked(int index)
-{
-    if(index == 0){ //Main Page
-        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(QStringLiteral("http://localhost:8332/"));
-        QNetworkRequest request(url);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-        request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
-        QJsonObject obj;
-        obj["method"] = "getbalances";
-        QJsonDocument doc(obj);
-        QByteArray data = doc.toJson();
-        QNetworkReply *reply = mgr->post(request, data);
+void MainWindow::showBalances(QJsonObject data){
+    bool ok = false;
+    QJsonObject result = data["result"].toObject()["mine"].toObject();
+    ui->BalanceText1->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8));
+    ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toVariant().toDouble(&ok), 'd', 8));
+    ui->BalanceText3->setText(QString::number(result["immature"].toVariant().toDouble(&ok), 'd', 8));
+    ui->BalanceText1_2->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8)); //Send page balance
+    double total = result["trusted"].toDouble()
+           + result["untrusted_pending"].toDouble()
+           + result["immature"].toDouble();
+    ui->BalanceText4->setText(QString::number(total, 'd', 8));
+    qDebug() << data;
+    qDebug() << ok;
+}
+void MainWindow::callFunction(std::string funcName,QJsonObject data){
+    if(funcName == "getbalances")
+        showBalances(data);
+}
+
+void MainWindow::GetResponse(std::string method,std::string params = ""){
+
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    const QUrl url(QStringLiteral("http://localhost:8332/"));
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
+    QJsonObject obj;
+    obj["method"] = method.c_str();
+    if(params != "")
+        obj["params"] = params.c_str();
+    QJsonDocument doc(obj);
+    QByteArray data = doc.toJson();
+    QJsonObject response;
+    QNetworkReply *reply = mgr->post(request, data);
         QObject::connect(reply, &QNetworkReply::finished, [=](){
             if(reply->error() == QNetworkReply::NoError){
-                bool ok = false;
                 QString contents = QString::fromUtf8(reply->readAll());
-                QJsonDocument jsonResponse = QJsonDocument::fromJson(contents.toUtf8());
-                QJsonObject jsonObject = jsonResponse.object();
-                QJsonObject result = jsonObject["result"].toObject()["mine"].toObject();
-                ui->BalanceText1->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8));
-                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toVariant().toDouble(&ok), 'd', 8));
-                ui->BalanceText3->setText(QString::number(result["immature"].toVariant().toDouble(&ok), 'd', 8));
-
-                ui->BalanceText1_2->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8)); //Send page balance
-
-                double total = result["trusted"].toDouble()
-                        + result["untrusted_pending"].toDouble()
-                        + result["immature"].toDouble();
-                ui->BalanceText4->setText(QString::number(total, 'd', 8));
-                qDebug() << result;
-                qDebug() << ok;
+                qDebug() << contents;
+                callFunction(method,QJsonDocument::fromJson(contents.toUtf8()).object());
             }
             else{
                 QString err = reply->errorString();
@@ -133,6 +145,14 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
             }
             reply->deleteLater();
         });
+
+}
+
+void MainWindow::on_tabWidget_tabBarClicked(int index)
+{
+    if(index == 0){ //Main Page
+        GetResponse("getbalances");
+
     } else if (index == 1) { //Send
         /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(QStringLiteral("http://localhost:8332/"));
