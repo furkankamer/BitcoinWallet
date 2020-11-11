@@ -96,7 +96,7 @@ void MainWindow::on_kayit_clicked()
 
 void MainWindow::on_tabWidget_tabBarClicked(int index)
 {
-    if(index == 0){
+    if(index == 0){ //Main Page
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(QStringLiteral("http://localhost:8332/"));
         QNetworkRequest request(url);
@@ -117,6 +117,9 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
                 ui->BalanceText1->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8));
                 ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toVariant().toDouble(&ok), 'd', 8));
                 ui->BalanceText3->setText(QString::number(result["immature"].toVariant().toDouble(&ok), 'd', 8));
+
+                ui->BalanceText1_2->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8)); //Send page balance
+
                 double total = result["trusted"].toDouble()
                         + result["untrusted_pending"].toDouble()
                         + result["immature"].toDouble();
@@ -130,6 +133,40 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
             }
             reply->deleteLater();
         });
+    } else if (index == 1) { //Send
+        /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(QStringLiteral("http://localhost:8332/"));
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
+        QJsonObject obj;
+        obj["method"] = "getbalances";
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        QObject::connect(reply, &QNetworkReply::finished, [=](){
+            if(reply->error() == QNetworkReply::NoError){
+                bool ok = false;
+                QString contents = QString::fromUtf8(reply->readAll());
+                QJsonDocument jsonResponse = QJsonDocument::fromJson(contents.toUtf8());
+                QJsonObject jsonObject = jsonResponse.object();
+                QJsonObject result = jsonObject["result"].toObject()["mine"].toObject();
+                ui->BalanceText1->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8));
+                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toVariant().toDouble(&ok), 'd', 8));
+                ui->BalanceText3->setText(QString::number(result["immature"].toVariant().toDouble(&ok), 'd', 8));
 
+                double total = result["trusted"].toDouble()
+                        + result["untrusted_pending"].toDouble()
+                        + result["immature"].toDouble();
+                ui->BalanceText4->setText(QString::number(total, 'd', 8));
+                qDebug() << result;
+                qDebug() << ok;
+            }
+            else{
+                QString err = reply->errorString();
+                qDebug() << err;
+            }
+            reply->deleteLater();
+        });*/
     }
 }
