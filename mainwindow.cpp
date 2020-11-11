@@ -100,6 +100,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     const QUrl url(QStringLiteral("http://localhost:8332/"));
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
     QJsonObject obj;
     obj["method"] = "getbalance";
     QJsonDocument doc(obj);
