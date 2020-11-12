@@ -196,10 +196,10 @@ text-align:center;
      <widget class="QWidget" name="LoginForm" native="true">
       <property name="geometry">
        <rect>
-        <x>490</x>
-        <y>30</y>
-        <width>181</width>
-        <height>141</height>
+        <x>430</x>
+        <y>0</y>
+        <width>351</width>
+        <height>171</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout">
@@ -568,7 +568,7 @@ text-align:center;
      <x>0</x>
      <y>0</y>
      <width>1031</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
