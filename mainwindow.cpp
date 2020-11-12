@@ -106,7 +106,7 @@ void MainWindow::createWallet(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
     if (result["name"].toString() != "") { //The wallet created and loaded successfully
         qDebug() << "Wallet created: " << current_user;
-        URL = "http://localhost:8332/wallet/" + current_user + ".dat";
+        URL = "http://localhost:8332/wallet/" + current_user;
     } else {
         qDebug() << "Error: createwallet";
         qDebug() << data;
