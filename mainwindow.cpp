@@ -13,7 +13,14 @@
 #include <map>
 
 #define STR_SALT_KEY "12344321"
+
+using namespace std;
+
 int onclick = 0;
+
+QString URL = "http://localhost:8332/"; //Changeable URL per wallet(user)
+QString current_user;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -83,15 +90,41 @@ void MainWindow::showBalances(QJsonObject data){
     qDebug() << data;
     qDebug() << ok;
 }
+
+void MainWindow::loadWallet(QJsonObject data) {
+    QJsonObject result = data["result"].toObject();
+    if (result["warning"].toString() != "") { //We must create a new wallet for the user
+        GetResponse("createwallet", current_user.toStdString());
+    } else { //The existing wallet loaded successfully
+        URL = "http://localhost:8332/wallet/" + current_user + ".dat";
+    }
+}
+
+void MainWindow::createWallet(QJsonObject data) {
+    QJsonObject result = data["result"].toObject();
+    if (result["name"].toString() != "") { //The wallet created and loaded successfully
+        URL = "http://localhost:8332/wallet/" + current_user + ".dat";
+    } else {
+        qDebug() << "Error: createwallet";
+        qDebug() << data;
+    }
+}
+
 void MainWindow::callFunction(std::string funcName,QJsonObject data){
     if(funcName == "getbalances")
         showBalances(data);
+    else if(funcName == "loadwallet")
+        loadWallet(data);
+    else if(funcName == "createwallet")
+        createWallet(data);
+    else if(funcName == "unloadwallet")
+        qDebug() << "Unloaded wallet:" << current_user;
 }
 
 void MainWindow::GetResponse(std::string method,std::string params = ""){
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(QStringLiteral("http://localhost:8332/"));
+    const QUrl url(URL);
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
@@ -124,6 +157,15 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         this->username = QString();
         ui->LoginForm->show();
         toggleTabs(false);
+        ui->BalanceText1->setText(" ");
+        ui->BalanceText2->setText(" ");
+        ui->BalanceText3->setText(" ");
+        ui->BalanceText4->setText(" ");
+        ui->label_wallet->setText(" ");
+
+        GetResponse("unloadwallet", current_user.toStdString());
+        current_user = "";
+        URL =
     }
 
     if(username == NULL)
@@ -132,7 +174,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         GetResponse("getbalances");
     } else if (index == 1) { //Send
         /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(QStringLiteral("http://localhost:8332/"));
+        const QUrl url(URL);
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
         request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
@@ -181,6 +223,15 @@ void MainWindow::on_signIn_clicked()
         ui->LoginForm->hide();
         ui->Information->hide();
         toggleTabs(true);
+
+        //Welcoming user
+        current_user = username;
+        QString welcome_user = "Welcome, " + username + ".";
+        ui->label_wallet->setText(welcome_user);
+
+        //Loading existing wallet
+        GetResponse("loadwallet", QString(username).toStdString());
+
         GetResponse("getbalances");
     }
     else{

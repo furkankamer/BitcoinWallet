@@ -19,6 +19,8 @@ private slots:
 
     void on_tabWidget_tabBarClicked(int index);
     void showBalances(QJsonObject data);
+    void loadWallet(QJsonObject data);
+    void createWallet(QJsonObject data);
     void callFunction(std::string funcName,QJsonObject data);
     void toggleTabs(bool visible);
 
