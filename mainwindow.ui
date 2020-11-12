@@ -569,7 +569,7 @@ text-align:center;
      <rect>
       <x>310</x>
       <y>0</y>
-      <width>181</width>
+      <width>351</width>
       <height>31</height>
      </rect>
     </property>
@@ -580,6 +580,9 @@ text-align:center;
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

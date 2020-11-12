@@ -94,8 +94,10 @@ void MainWindow::showBalances(QJsonObject data){
 void MainWindow::loadWallet(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
     if (result["warning"].toString() != "") { //We must create a new wallet for the user
+        qDebug() << "Creating wallet: " << current_user;
         GetResponse("createwallet",{ current_user.toStdString().c_str()});
     } else { //The existing wallet loaded successfully
+        qDebug() << "Wallet loaded: " << current_user;
         URL = "http://localhost:8332/wallet/" + current_user + ".dat";
     }
 }
@@ -103,6 +105,7 @@ void MainWindow::loadWallet(QJsonObject data) {
 void MainWindow::createWallet(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
     if (result["name"].toString() != "") { //The wallet created and loaded successfully
+        qDebug() << "Wallet created: " << current_user;
         URL = "http://localhost:8332/wallet/" + current_user + ".dat";
     } else {
         qDebug() << "Error: createwallet";
@@ -118,7 +121,7 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
     else if(funcName == "createwallet")
         createWallet(data);
     else if(funcName == "unloadwallet")
-        qDebug() << "Unloaded wallet:" << current_user;
+        qDebug() << "Wallet unloaded: " << current_user;
 }
 
 void MainWindow::GetResponse(std::string method,QJsonArray params = {}){ //Parameters forms an array of strings
