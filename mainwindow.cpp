@@ -98,7 +98,7 @@ void MainWindow::loadWallet(QJsonObject data) {
         GetResponse("createwallet",{ current_user.toStdString().c_str()});
     } else { //The existing wallet loaded successfully
         qDebug() << "Wallet loaded: " << current_user;
-        URL = "http://localhost:8332/wallet/" + current_user + ".dat";
+        URL = "http://localhost:8332/wallet/" + current_user;
     }
 }
 
