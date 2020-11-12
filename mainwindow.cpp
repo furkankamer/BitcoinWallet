@@ -121,7 +121,7 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         qDebug() << "Unloaded wallet:" << current_user;
 }
 
-void MainWindow::GetResponse(std::string method,std::string params = ""){
+void MainWindow::GetResponse(std::string method,std::string params = ""){ //Parameters forms an array of strings
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(URL);
@@ -130,8 +130,18 @@ void MainWindow::GetResponse(std::string method,std::string params = ""){
     request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
     QJsonObject obj;
     obj["method"] = method.c_str();
+
+    /*if(params[0] != "") {
+        int paramCount = sizeof(params) / sizeof(params[0]);
+        for(int i = 0; i < paramCount; ++i) {
+            obj["params"] = QJsonArray();
+            obj["params"][i] = params[i];
+        }
+    }*/
+
     if(params != "")
         obj["params"] = params.c_str();
+
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QJsonObject response;
@@ -163,9 +173,9 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         ui->BalanceText4->setText(" ");
         ui->label_wallet->setText(" ");
 
-        GetResponse("unloadwallet", current_user.toStdString());
+        GetResponse("unloadwallet", "[\"" + current_user.toStdString() + "\"]");
         current_user = "";
-        URL =
+        URL = "http://localhost:8332/";
     }
 
     if(username == NULL)
@@ -230,7 +240,7 @@ void MainWindow::on_signIn_clicked()
         ui->label_wallet->setText(welcome_user);
 
         //Loading existing wallet
-        GetResponse("loadwallet", QString(username).toStdString());
+        GetResponse("loadwallet", "[\"" + QString(username).toStdString() + ".dat\"]");
 
         GetResponse("getbalances");
     }
