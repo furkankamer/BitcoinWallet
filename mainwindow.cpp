@@ -175,10 +175,9 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         ui->BalanceText3->setText(" ");
         ui->BalanceText4->setText(" ");
         ui->label_wallet->setText(" ");
-
+        URL = "http://localhost:8332/";
         GetResponse("unloadwallet", {current_user.toStdString().c_str()});
         current_user = "";
-        URL = "http://localhost:8332/";
     }
 
     if(username == NULL)
