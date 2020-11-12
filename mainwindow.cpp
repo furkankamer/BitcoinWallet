@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    toggleTabs(false);
 }
 MainWindow::~MainWindow()
 {
@@ -33,10 +34,7 @@ QSqlQuery RunQuery(QString querystr,QString mode = "read"){
     db.setPassword("FjnjB28yNrnKOwp_coyq7LABdtIL2iIK");
     bool ok = db.open();
     QSqlQuery query;
-    if(ok){
-        qDebug( querystr.toStdString().c_str());
-        query.exec(querystr);
-    }
+    if(ok) query.exec(querystr);
     return query;
 }
 
@@ -49,6 +47,13 @@ bool SignUp(QString querystr){
     }
 }
 
+void MainWindow::toggleTabs(bool visible){
+
+    for(int i=1;i<4;i++){
+        ui->tabWidget->setTabEnabled(i,visible);
+        ui->tabWidget->setTabVisible(i,visible);
+    }
+}
 
 bool SignIn(QString querystr){
     QSqlQuery resultquery = RunQuery(querystr);
@@ -61,42 +66,6 @@ std::string getHashedPass(QString password){
     QByteArray pswNsalt (password.toStdString().c_str());
     pswNsalt.append(STR_SALT_KEY) ;
     return QCryptographicHash::hash(pswNsalt, QCryptographicHash::Sha256).toHex().toStdString();
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    QString username = ui->lineEdit->text();
-    QString password = QString(getHashedPass(ui->lineEdit_2->text()).c_str());
-    QString signinquery = "select * from users where username = '"
-            + username + "' and password = '" + password + "'";
-    bool signin = SignIn(signinquery);
-    ui->text->show();
-    if(signin){
-        ui->lineEdit->hide();
-        ui->lineEdit_2->hide();
-        ui->text->setText("success in signin");
-    }
-    else{
-        ui->text->show();
-        ui->text->setText("an error occured");
-    }
-}
-
-void MainWindow::on_kayit_clicked()
-{
-    ui->text->show();
-    QString username = ui->lineEdit->text();
-    QString password = QString(getHashedPass(ui->lineEdit_2->text()).c_str());
-    QString signupquery = "insert into users (username, password) values('"
-            + username + "','" + password + "')";
-    bool signup = SignUp(signupquery);
-    if(signup){
-        ui->text->setText("success in signup");
-    }
-    else{
-        ui->text->show();
-        ui->text->setText("an error occured");
-    }
 }
 
 void MainWindow::showBalances(QJsonObject data){
@@ -150,9 +119,16 @@ void MainWindow::GetResponse(std::string method,std::string params = ""){
 
 void MainWindow::on_tabWidget_tabBarClicked(int index)
 {
+    if(ui->tabWidget->tabText(index) == "Logout"){
+        this->username = QString();
+        ui->LoginForm->show();
+        toggleTabs(false);
+    }
+
+    if(username == NULL)
+        return;
     if(index == 0){ //Main Page
         GetResponse("getbalances");
-
     } else if (index == 1) { //Send
         /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(QStringLiteral("http://localhost:8332/"));
@@ -189,4 +165,44 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
             reply->deleteLater();
         });*/
     }
+}
+
+void MainWindow::on_signIn_clicked()
+{
+    QString username = ui->userText->text();
+    QString password = QString(getHashedPass(ui->passText->text()).c_str());
+    QString signinquery = "select * from users where username = '"
+            + username + "' and password = '" + password + "'";
+    bool signin = SignIn(signinquery);
+    ui->Information->show();
+    if(signin){
+        this->username = username;
+        ui->LoginForm->hide();
+        ui->Information->hide();
+        toggleTabs(true);
+        GetResponse("getbalances");
+    }
+    else{
+        ui->Information->show();
+        ui->Information->setText("an error occured");
+    }
+
+}
+
+void MainWindow::on_signUp_clicked()
+{
+    ui->Information->show();
+    QString username = ui->userText->text();
+    QString password = QString(getHashedPass(ui->passText->text()).c_str());
+    QString signupquery = "insert into users (username, password) values('"
+            + username + "','" + password + "')";
+    bool signup = SignUp(signupquery);
+    if(signup){
+        ui->Information->setText("success in signup");
+    }
+    else{
+        ui->Information->show();
+        ui->Information->setText("an error occured");
+    }
+
 }

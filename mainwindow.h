@@ -16,18 +16,20 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
-
-    void on_kayit_clicked();
 
     void on_tabWidget_tabBarClicked(int index);
     void showBalances(QJsonObject data);
     void callFunction(std::string funcName,QJsonObject data);
-
+    void toggleTabs(bool visible);
 
     void GetResponse(std::string method, std::string params);
     
+    void on_signIn_clicked();
+
+    void on_signUp_clicked();
+
 private:
+    QString username = QString();
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H
