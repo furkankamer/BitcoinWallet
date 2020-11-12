@@ -40,7 +40,8 @@ QSqlQuery RunQuery(QString querystr,QString mode = "read"){
 
 bool SignUp(QString querystr){
     try {
-        RunQuery(querystr,"write");
+        if(RunQuery(querystr,"write").lastError().isValid())
+            return false;
         return true;
     }  catch (QException exp) {
         return false;
@@ -202,7 +203,7 @@ void MainWindow::on_signUp_clicked()
     }
     else{
         ui->Information->show();
-        ui->Information->setText("an error occured");
+        ui->Information->setText("this username already in use.");
     }
 
 }
