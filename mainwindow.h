@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QJsonObject>
+#include <QJsonArray>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,7 +25,7 @@ private slots:
     void callFunction(std::string funcName,QJsonObject data);
     void toggleTabs(bool visible);
 
-    void GetResponse(std::string method, std::string params);
+    void GetResponse(std::string method, QJsonArray params);
     
     void on_signIn_clicked();
 

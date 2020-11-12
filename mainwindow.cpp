@@ -94,7 +94,7 @@ void MainWindow::showBalances(QJsonObject data){
 void MainWindow::loadWallet(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
     if (result["warning"].toString() != "") { //We must create a new wallet for the user
-        GetResponse("createwallet", current_user.toStdString());
+        GetResponse("createwallet",{ current_user.toStdString().c_str()});
     } else { //The existing wallet loaded successfully
         URL = "http://localhost:8332/wallet/" + current_user + ".dat";
     }
@@ -121,8 +121,7 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         qDebug() << "Unloaded wallet:" << current_user;
 }
 
-void MainWindow::GetResponse(std::string method,std::string params = ""){ //Parameters forms an array of strings
-
+void MainWindow::GetResponse(std::string method,QJsonArray params = {}){ //Parameters forms an array of strings
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(URL);
     QNetworkRequest request(url);
@@ -139,8 +138,9 @@ void MainWindow::GetResponse(std::string method,std::string params = ""){ //Para
         }
     }*/
 
-    if(params != "")
-        obj["params"] = params.c_str();
+    if(!params.empty()){
+        obj["params"] = params;
+    }
 
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
@@ -173,7 +173,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         ui->BalanceText4->setText(" ");
         ui->label_wallet->setText(" ");
 
-        GetResponse("unloadwallet", "[\"" + current_user.toStdString() + "\"]");
+        GetResponse("unloadwallet", {current_user.toStdString().c_str()});
         current_user = "";
         URL = "http://localhost:8332/";
     }
@@ -240,7 +240,7 @@ void MainWindow::on_signIn_clicked()
         ui->label_wallet->setText(welcome_user);
 
         //Loading existing wallet
-        GetResponse("loadwallet", "[\"" + QString(username).toStdString() + ".dat\"]");
+        GetResponse("loadwallet", {QString(username).toStdString().c_str()});
 
         GetResponse("getbalances");
     }
