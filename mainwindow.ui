@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1101</width>
-    <height>261</height>
+    <width>1105</width>
+    <height>332</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,11 +47,11 @@ text-align:center;
       <x>10</x>
       <y>20</y>
       <width>1081</width>
-      <height>201</height>
+      <height>281</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -822,6 +822,17 @@ p, li { white-space: pre-wrap; }
      <attribute name="title">
       <string>Transactions</string>
      </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>671</width>
+        <height>231</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_4">
      <attribute name="title">
@@ -885,8 +896,8 @@ on pages using tabs above.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1101</width>
-     <height>26</height>
+     <width>1105</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

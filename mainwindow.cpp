@@ -85,8 +85,7 @@ bool SignUp(QString querystr){
 void MainWindow::toggleTabs(bool visible){
     ui->transactionPanel->setVisible(visible);
     ui->Balances->setVisible(visible);
-
-    for(int i=1;i<5;i++){
+    for(int i=1;i<ui->tabWidget->count();i++){
         ui->tabWidget->setTabEnabled(i,visible);
         ui->tabWidget->setTabVisible(i,visible);
     }
@@ -151,10 +150,23 @@ void MainWindow::createWallet(QJsonObject data) {
         qDebug() << data;
     }
 }
+QLabel* createLabel(QString text, QWidget* parent){
+    QLabel* ll = new QLabel(parent);
+    ll->setText(text);
+    return ll;
+}
 void MainWindow::ShowRecentTransaction(QJsonObject data){
-    QJsonObject recentTransaction = data["result"].toArray().last().toObject();
+    QJsonArray alltransactions = data["result"].toArray();
+    QJsonObject recentTransaction = alltransactions.last().toObject();
     if(recentTransaction.empty()) ui->transactionText->setText("No transaction available");
     else{
+        for(int i=0;i<alltransactions.count();i++){
+            ui->verticalLayout->addWidget(createLabel(QString("Transaction %d").arg(i),this));
+            ui->verticalLayout->addWidget(createLabel(QString("Time: ") + QString::number(recentTransaction["time"].toVariant().toInt()),this));
+            ui->verticalLayout->addWidget(createLabel(QString("Address: ") + recentTransaction["address"].toString(),this));
+            ui->verticalLayout->addWidget(createLabel(QString("Amount: ") + QString::number(recentTransaction["amount"].toVariant().toDouble() +
+                                                      recentTransaction["fee"].toVariant().toDouble(), 'd', 8),this));
+        }
         ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
         ui->address->setText(recentTransaction["address"].toString());
         ui->amount->setText(QString::number(recentTransaction["amount"].toVariant().toDouble() +
@@ -195,6 +207,8 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         setNewBitcoinAddress(data);
     else if(funcName == "estimatesmartfee")
         estimateFee(data);
+    else if(funcName == "sendtoaddress")
+        GetResponse("getbalances",{});
 }
 
 
@@ -243,7 +257,8 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         URL = "http://localhost:8332/";
         GetResponse("unloadwallet", {current_user.toStdString().c_str()});
         current_user = "";
-
+        ui->userText->setText("");
+        ui->passText->setText("");
         ui->tabWidget->setCurrentIndex(0);
     }
 
@@ -253,9 +268,12 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         GetResponse("getbalances");
         GetResponse("listtransactions");
     } else if (index == 1) { //Send
-        ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble()); //Send
-
         GetResponse("estimatesmartfee", {2}); //Calculate conservative fee
+        if(ui->label_feeRate->text().toDouble() > ui->BalanceText1->text().toDouble())
+            ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble()); //Send
+        else ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble() - ui->label_feeRate->text().toDouble());
+    } else if (index == 3){//listtransactions
+        GetResponse("listtransactions");
     }
 }
 
@@ -280,6 +298,9 @@ void MainWindow::on_signIn_clicked()
         //Loading existing wallet
         GetResponse("loadwallet", {QString(username).toStdString().c_str()});
         ui->tabWidget->setCurrentIndex(5);
+        GetResponse("estimatesmartfee", {2});
+        if(ui->label_feeRate->text() == "")
+            ui->label_feeRate->setText("0.00120000");
     }
     else{
         ui->Information->show();
@@ -313,6 +334,17 @@ void MainWindow::on_doubleSpinBox_amount_valueChanged(double arg1)
 
 void MainWindow::on_kayit_2_clicked()
 {
+    QMessageBox msgBox;
+    if(ui->sendBitcoinAddress->text() == ""){
+        msgBox.setText("You must enter an address");
+        msgBox.exec();
+        return;
+    }
+    else if(ui->sendBitcoinAmount->text().toInt() == 0){
+        msgBox.setText("The amount cannot be zero");
+        msgBox.exec();
+        return;
+    }
     GetResponse("sendtoaddress",{ui->sendBitcoinAddress->text(),ui->sendBitcoinAmount->value()});
 }
 
