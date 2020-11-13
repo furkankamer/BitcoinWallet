@@ -31,6 +31,13 @@ private slots:
     void on_signIn_clicked();
     void toggleIcons(bool send);
     void on_signUp_clicked();
+    void setNewBitcoinAddress(QJsonObject data);
+    void closeEvent (QCloseEvent *event);
+    void on_doubleSpinBox_amount_valueChanged(double arg1);
+
+    void on_kayit_2_clicked();
+
+    void on_generateAddress_clicked();
 
 private:
     QString username = QString();

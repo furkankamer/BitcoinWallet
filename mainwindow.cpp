@@ -12,7 +12,8 @@
 #include <QThread>
 #include <QtConcurrent>
 #include <QFuture>
-
+#include <QCloseEvent>
+#include <QMessageBox>
 #define STR_SALT_KEY "12344321"
 
 using namespace std;
@@ -56,11 +57,26 @@ QSqlQuery RunQuery(QString querystr,QString mode = "read"){
     return query;
 }
 
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "btc",
+                                                                tr("Are you sure?\n"),
+                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        URL = "http://localhost:8332/";
+        if(current_user != "") GetResponse("unloadwallet", {current_user.toStdString().c_str()});
+        QMessageBox msgBox;
+        msgBox.setText("App will be closed soon");
+        msgBox.exec();
+    }
+}
+
 bool SignUp(QString querystr){
     try {
-        if(RunQuery(querystr,"write").lastError().isValid())
-            return false;
-        return true;
+        return !(RunQuery(querystr,"write").lastError().isValid());
     }  catch (QException exp) {
         return false;
     }
@@ -115,6 +131,11 @@ void MainWindow::loadWallet(QJsonObject data) {
     }
 }
 
+void MainWindow::setNewBitcoinAddress(QJsonObject data){
+    QString address = data["result"].toString();
+    ui->receiveAddress->setText(address);
+}
+
 void MainWindow::toggleIcons(bool send){
     ui->sendIcon->setVisible(send);
     ui->receiveIcon->setVisible(!send);
@@ -158,6 +179,8 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         qDebug() << "Wallet unloaded: " << current_user;
     else if(funcName == "listtransactions")
         ShowRecentTransaction(data);
+    else if(funcName == "getnewaddress")
+        setNewBitcoinAddress(data);
 }
 
 
@@ -221,7 +244,8 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     if(index == 0){ //Main Page
         GetResponse("getbalances");
         GetResponse("listtransactions");
-    } else if (index == 1) { //Send
+    } else if (index == 1) {
+        ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble()); //Send
         /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(URL);
         QNetworkRequest request(url);
@@ -304,4 +328,19 @@ void MainWindow::on_signUp_clicked()
         ui->Information->setText("this username already in use.");
     }
 
+}
+
+void MainWindow::on_doubleSpinBox_amount_valueChanged(double arg1)
+{
+
+}
+
+void MainWindow::on_kayit_2_clicked()
+{
+    GetResponse("sendtoaddress",{ui->sendBitcoinAddress->text(),ui->sendBitcoinAmount->value()});
+}
+
+void MainWindow::on_generateAddress_clicked()
+{
+    GetResponse("getnewaddress");
 }
