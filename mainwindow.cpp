@@ -27,10 +27,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     toggleTabs(false);
+    setPixmap(ui->sendIcon, ":/upload.jpg");
+    setPixmap(ui->receiveIcon, ":/download-flat.png");
 }
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::setPixmap(QLabel* label, QString url){
+    QPixmap pixmapTarget = QPixmap(url);
+    pixmapTarget = pixmapTarget.scaled(100-5, 100-5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    label->setPixmap(pixmapTarget);
+    label->hide();
+    label->hide();
 }
 std::map<std::string, std::function<void(QJsonObject)>> myMap;
 QSqlQuery RunQuery(QString querystr,QString mode = "read"){
@@ -56,6 +66,8 @@ bool SignUp(QString querystr){
 }
 
 void MainWindow::toggleTabs(bool visible){
+    ui->transactionPanel->setVisible(visible);
+    ui->Balances->setVisible(visible);
 
     for(int i=1;i<4;i++){
         ui->tabWidget->setTabEnabled(i,visible);
@@ -102,6 +114,11 @@ void MainWindow::loadWallet(QJsonObject data) {
     }
 }
 
+void MainWindow::toggleIcons(bool send){
+    ui->sendIcon->setVisible(send);
+    ui->receiveIcon->setVisible(!send);
+}
+
 void MainWindow::createWallet(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
     if (result["name"].toString() != "") { //The wallet created and loaded successfully
@@ -110,6 +127,17 @@ void MainWindow::createWallet(QJsonObject data) {
     } else {
         qDebug() << "Error: createwallet";
         qDebug() << data;
+    }
+}
+void MainWindow::ShowRecentTransaction(QJsonObject data){
+    QJsonObject recentTransaction = data["result"].toArray().last().toObject();
+    if(recentTransaction.empty()) ui->transactionText->setText("No transaction available");
+    else{
+        ui->time->setText(recentTransaction["time"].toString());
+        ui->address->setText(recentTransaction["address"].toString());
+        ui->amount->setText(recentTransaction["amount"].toString());
+        QString transactionCategory = recentTransaction["category"].toString();
+        toggleIcons(transactionCategory == "send");
     }
 }
 
@@ -122,6 +150,8 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         createWallet(data);
     else if(funcName == "unloadwallet")
         qDebug() << "Wallet unloaded: " << current_user;
+    else if(funcName == "listtransactions")
+        ShowRecentTransaction(data);
 }
 
 void MainWindow::GetResponse(std::string method,QJsonArray params = {}){ //Parameters forms an array of strings
@@ -184,6 +214,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         return;
     if(index == 0){ //Main Page
         GetResponse("getbalances");
+        GetResponse("listtransactions");
     } else if (index == 1) { //Send
         /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(URL);
@@ -245,6 +276,7 @@ void MainWindow::on_signIn_clicked()
         GetResponse("loadwallet", {QString(username).toStdString().c_str()});
 
         GetResponse("getbalances");
+        GetResponse("listtransactions");
     }
     else{
         ui->Information->show();

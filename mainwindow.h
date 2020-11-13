@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QLabel>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,11 +25,11 @@ private slots:
     void createWallet(QJsonObject data);
     void callFunction(std::string funcName,QJsonObject data);
     void toggleTabs(bool visible);
-
+    void setPixmap(QLabel* label, QString url);
     void GetResponse(std::string method, QJsonArray params);
-    
+    void ShowRecentTransaction(QJsonObject data);
     void on_signIn_clicked();
-
+    void toggleIcons(bool send);
     void on_signUp_clicked();
 
 private:
