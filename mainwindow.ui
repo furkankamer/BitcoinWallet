@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1031</width>
+    <width>1079</width>
     <height>261</height>
    </rect>
   </property>
@@ -43,7 +43,7 @@ text-align:center;
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>1011</width>
+      <width>1061</width>
       <height>201</height>
      </rect>
     </property>
@@ -57,7 +57,7 @@ text-align:center;
      <widget class="QWidget" name="LoginForm" native="true">
       <property name="geometry">
        <rect>
-        <x>360</x>
+        <x>390</x>
         <y>0</y>
         <width>351</width>
         <height>171</height>
@@ -183,7 +183,7 @@ text-align:center;
      <widget class="QGroupBox" name="transactionPanel">
       <property name="geometry">
        <rect>
-        <x>720</x>
+        <x>760</x>
         <y>0</y>
         <width>281</width>
         <height>161</height>
@@ -357,7 +357,7 @@ text-align:center;
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>351</width>
+        <width>371</width>
         <height>161</height>
        </rect>
       </property>
@@ -385,7 +385,7 @@ text-align:center;
       <widget class="QLabel" name="BalanceText1">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>190</x>
          <y>10</y>
          <width>161</width>
          <height>21</height>
@@ -457,7 +457,7 @@ text-align:center;
       <widget class="QLabel" name="BalanceText2">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>190</x>
          <y>40</y>
          <width>161</width>
          <height>21</height>
@@ -475,9 +475,9 @@ text-align:center;
       <widget class="QLabel" name="BalanceText3">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>190</x>
          <y>70</y>
-         <width>151</width>
+         <width>161</width>
          <height>21</height>
         </rect>
        </property>
@@ -493,9 +493,9 @@ text-align:center;
       <widget class="QLabel" name="BalanceText4">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>190</x>
          <y>100</y>
-         <width>151</width>
+         <width>161</width>
          <height>21</height>
         </rect>
        </property>
@@ -753,6 +753,25 @@ text-align:center;
       <string>Logout</string>
      </attribute>
     </widget>
+    <widget class="QWidget" name="tab_5">
+     <attribute name="title">
+      <string/>
+     </attribute>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>521</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Welcome to your private wallet. You can send and receive bitcoins and monitor your current state.
+App is designed to be simple and useful . You can navigate on tabs on the upper page.</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
    <widget class="QLabel" name="label_wallet">
     <property name="enabled">
@@ -784,7 +803,7 @@ text-align:center;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1031</width>
+     <width>1079</width>
      <height>21</height>
     </rect>
    </property>

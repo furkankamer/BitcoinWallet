@@ -10,7 +10,8 @@
 #include<QDebug>
 #include <QJsonObject>
 #include <QThread>
-#include <map>
+#include <QtConcurrent>
+#include <QFuture>
 
 #define STR_SALT_KEY "12344321"
 
@@ -69,7 +70,7 @@ void MainWindow::toggleTabs(bool visible){
     ui->transactionPanel->setVisible(visible);
     ui->Balances->setVisible(visible);
 
-    for(int i=1;i<4;i++){
+    for(int i=1;i<5;i++){
         ui->tabWidget->setTabEnabled(i,visible);
         ui->tabWidget->setTabVisible(i,visible);
     }
@@ -154,44 +155,44 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         ShowRecentTransaction(data);
 }
 
-void MainWindow::GetResponse(std::string method,QJsonArray params = {}){ //Parameters forms an array of strings
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(URL);
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
-    QJsonObject obj;
-    obj["method"] = method.c_str();
 
-    /*if(params[0] != "") {
-        int paramCount = sizeof(params) / sizeof(params[0]);
-        for(int i = 0; i < paramCount; ++i) {
-            obj["params"] = QJsonArray();
-            obj["params"][i] = params[i];
+void MainWindow::GetResponse(std::string method,QJsonArray params = {}){
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(URL);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
+        QJsonObject obj;
+        obj["method"] = method.c_str();
+
+        /*if(params[0] != "") {
+            int paramCount = sizeof(params) / sizeof(params[0]);
+            for(int i = 0; i < paramCount; ++i) {
+                obj["params"] = QJsonArray();
+                obj["params"][i] = params[i];
+            }
+        }*/
+
+        if(!params.empty()){
+            obj["params"] = params;
         }
-    }*/
 
-    if(!params.empty()){
-        obj["params"] = params;
-    }
-
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-    QJsonObject response;
-    QNetworkReply *reply = mgr->post(request, data);
-        QObject::connect(reply, &QNetworkReply::finished, [=](){
-            if(reply->error() == QNetworkReply::NoError){
-                QString contents = QString::fromUtf8(reply->readAll());
-                qDebug() << contents;
-                callFunction(method,QJsonDocument::fromJson(contents.toUtf8()).object());
-            }
-            else{
-                QString err = reply->errorString();
-                qDebug() << err;
-            }
-            reply->deleteLater();
-        });
-
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QJsonObject response;
+        QNetworkReply *reply = mgr->post(request, data);
+            QObject::connect(reply, &QNetworkReply::finished, [=](){
+                if(reply->error() == QNetworkReply::NoError){
+                    QString contents = QString::fromUtf8(reply->readAll());
+                    qDebug() << contents;
+                    callFunction(method,QJsonDocument::fromJson(contents.toUtf8()).object());
+                }
+                else{
+                    QString err = reply->errorString();
+                    qDebug() << err;
+                }
+                reply->deleteLater();
+            });
 }
 
 void MainWindow::on_tabWidget_tabBarClicked(int index)
@@ -271,12 +272,9 @@ void MainWindow::on_signIn_clicked()
         current_user = username;
         QString welcome_user = "Welcome, " + username + ".";
         ui->label_wallet->setText(welcome_user);
-
         //Loading existing wallet
         GetResponse("loadwallet", {QString(username).toStdString().c_str()});
-
-        GetResponse("getbalances");
-        GetResponse("listtransactions");
+        ui->tabWidget->setCurrentIndex(4);
     }
     else{
         ui->Information->show();
