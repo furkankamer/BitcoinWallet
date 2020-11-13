@@ -28,6 +28,8 @@ private slots:
     void setPixmap(QLabel* label, QString url);
     void GetResponse(std::string method, QJsonArray params);
     void ShowRecentTransaction(QJsonObject data);
+    void estimateFee(QJsonObject data);
+
     void on_signIn_clicked();
     void toggleIcons(bool send);
     void on_signUp_clicked();

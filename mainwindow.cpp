@@ -157,14 +157,26 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
     else{
         ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
         ui->address->setText(recentTransaction["address"].toString());
-        ui->amount->setText(QString::number(recentTransaction["amount"].toVariant().toDouble(), 'd', 8));
+        ui->amount->setText(QString::number(recentTransaction["amount"].toVariant().toDouble() +
+                            recentTransaction["fee"].toVariant().toDouble(), 'd', 8)); //amount+fee
 
         qDebug() << "Time: " << recentTransaction["time"].toVariant().toInt();
         qDebug() << "Address: " << recentTransaction["address"].toString();
-        qDebug() << "Amount" << recentTransaction["amount"].toVariant().toDouble();
+        qDebug() << "Amount: " << recentTransaction["amount"].toVariant().toDouble();
+        qDebug() << "Fee: " << recentTransaction["fee"].toVariant().toDouble();
 
         QString transactionCategory = recentTransaction["category"].toString();
         toggleIcons(transactionCategory == "send");
+    }
+}
+
+void MainWindow::estimateFee(QJsonObject data) {
+    QJsonObject result = data["result"].toObject();
+    if (result["feerate"] != NULL) {
+        ui->label_feeRate->setText(QString::number(result["feerate"].toVariant().toDouble(), 'd', 8));
+    } else {
+        qDebug() << "Error when estimating fee.";
+        ui->label_feeRate->setText("0.00001000");
     }
 }
 
@@ -181,6 +193,8 @@ void MainWindow::callFunction(std::string funcName,QJsonObject data){
         ShowRecentTransaction(data);
     else if(funcName == "getnewaddress")
         setNewBitcoinAddress(data);
+    else if(funcName == "estimatesmartfee")
+        estimateFee(data);
 }
 
 
@@ -192,14 +206,6 @@ void MainWindow::GetResponse(std::string method,QJsonArray params = {}){
         request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
         QJsonObject obj;
         obj["method"] = method.c_str();
-
-        /*if(params[0] != "") {
-            int paramCount = sizeof(params) / sizeof(params[0]);
-            for(int i = 0; i < paramCount; ++i) {
-                obj["params"] = QJsonArray();
-                obj["params"][i] = params[i];
-            }
-        }*/
 
         if(!params.empty()){
             obj["params"] = params;
@@ -237,6 +243,8 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         URL = "http://localhost:8332/";
         GetResponse("unloadwallet", {current_user.toStdString().c_str()});
         current_user = "";
+
+        ui->tabWidget->setCurrentIndex(0);
     }
 
     if(username == NULL)
@@ -244,42 +252,10 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     if(index == 0){ //Main Page
         GetResponse("getbalances");
         GetResponse("listtransactions");
-    } else if (index == 1) {
+    } else if (index == 1) { //Send
         ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble()); //Send
-        /*QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(URL);
-        QNetworkRequest request(url);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-        request.setRawHeader("Authorization",QString("Basic " + QString("user:pw").toLocal8Bit().toBase64()).toLocal8Bit());
-        QJsonObject obj;
-        obj["method"] = "getbalances";
-        QJsonDocument doc(obj);
-        QByteArray data = doc.toJson();
-        QNetworkReply *reply = mgr->post(request, data);
-        QObject::connect(reply, &QNetworkReply::finished, [=](){
-            if(reply->error() == QNetworkReply::NoError){
-                bool ok = false;
-                QString contents = QString::fromUtf8(reply->readAll());
-                QJsonDocument jsonResponse = QJsonDocument::fromJson(contents.toUtf8());
-                QJsonObject jsonObject = jsonResponse.object();
-                QJsonObject result = jsonObject["result"].toObject()["mine"].toObject();
-                ui->BalanceText1->setText(QString::number(result["trusted"].toVariant().toDouble(&ok), 'd', 8));
-                ui->BalanceText2->setText(QString::number(result["untrusted_pending"].toVariant().toDouble(&ok), 'd', 8));
-                ui->BalanceText3->setText(QString::number(result["immature"].toVariant().toDouble(&ok), 'd', 8));
 
-                double total = result["trusted"].toDouble()
-                        + result["untrusted_pending"].toDouble()
-                        + result["immature"].toDouble();
-                ui->BalanceText4->setText(QString::number(total, 'd', 8));
-                qDebug() << result;
-                qDebug() << ok;
-            }
-            else{
-                QString err = reply->errorString();
-                qDebug() << err;
-            }
-            reply->deleteLater();
-        });*/
+        GetResponse("estimatesmartfee", {2}); //Calculate conservative fee
     }
 }
 
@@ -303,7 +279,7 @@ void MainWindow::on_signIn_clicked()
         ui->label_wallet->setText(welcome_user);
         //Loading existing wallet
         GetResponse("loadwallet", {QString(username).toStdString().c_str()});
-        ui->tabWidget->setCurrentIndex(4);
+        ui->tabWidget->setCurrentIndex(5);
     }
     else{
         ui->Information->show();
