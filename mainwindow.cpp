@@ -134,9 +134,14 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
     QJsonObject recentTransaction = data["result"].toArray().last().toObject();
     if(recentTransaction.empty()) ui->transactionText->setText("No transaction available");
     else{
-        ui->time->setText(recentTransaction["time"].toString());
+        ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
         ui->address->setText(recentTransaction["address"].toString());
-        ui->amount->setText(recentTransaction["amount"].toString());
+        ui->amount->setText(QString::number(recentTransaction["amount"].toVariant().toDouble(), 'd', 8));
+
+        qDebug() << "Time: " << recentTransaction["time"].toVariant().toInt();
+        qDebug() << "Address: " << recentTransaction["address"].toString();
+        qDebug() << "Amount" << recentTransaction["amount"].toVariant().toDouble();
+
         QString transactionCategory = recentTransaction["category"].toString();
         toggleIcons(transactionCategory == "send");
     }
