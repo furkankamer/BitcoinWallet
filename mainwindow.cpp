@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     toggleTabs(false);
     setPixmap(ui->sendIcon, ":/upload.jpg");
-    setPixmap(ui->receiveIcon, ":/download-flat.png");
+    setPixmap(ui->receiveIcon, ":/download.jpg");
 }
 MainWindow::~MainWindow()
 {
@@ -163,7 +163,7 @@ QLabel* createLabel(QString text){
 }
 QLabel* labelWithImage(bool send){
     QLabel* label = new QLabel();
-    QString url = send ? QString(":/upload.jpg") : QString(":/download-flat.png");
+    QString url = send ? QString(":/upload.jpg") : QString(":/download.jpg");
     QPixmap pixmapTarget = QPixmap(url);
     pixmapTarget = pixmapTarget.scaled(100-5, 30-5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     label->setPixmap(pixmapTarget);
@@ -174,6 +174,7 @@ void addRowToTable(QTableWidget* table,QString text, bool send){
     table->insertRow(table->rowCount());
     table->setItem(table->rowCount()-1,1,new QTableWidgetItem(text));
     table->setCellWidget(table->rowCount()-1,0,labelWithImage(send));
+    table->resizeRowToContents(table->rowCount()-1);
 }
 
 
@@ -187,11 +188,12 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
             QJsonObject transaction = alltransactions[i].toObject();
             addRowToTable(ui->tableWidget,
             QString("Time: ") + QString::number(transaction["time"].toVariant().toInt())
-                    + QString(", Address: ") + transaction["address"].toString()
-                    + QString(", Amount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
+                    + QString(" \nAddress: ") + transaction["address"].toString()
+                    + QString(" \nAmount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
                               recentTransaction["fee"].toVariant().toDouble(), 'd', 8)
-                    + QString(", Confirmations: ") + QString::number(transaction["confirmations"].toInt())
-                    + QString(", Trusted: ") + transaction["trusted"].toString(),transaction["category"].toString() == "send");
+                    + QString(", Fee: ") + QString::number(transaction["fee"].toVariant().toDouble(), 'd', 8)
+                    + QString(" \nConfirmations: ") + QString::number(transaction["confirmations"].toInt())
+                    + QString(" \nTrusted: ") + transaction["trusted"].toString(),transaction["category"].toString() == "send");
         }
         ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
         ui->address->setText(recentTransaction["address"].toString());
