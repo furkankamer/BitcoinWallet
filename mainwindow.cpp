@@ -57,6 +57,8 @@ QSqlQuery RunQuery(QString querystr,QString mode = "read"){
     return query;
 }
 
+
+
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "btc",
@@ -150,9 +152,24 @@ void MainWindow::createWallet(QJsonObject data) {
         qDebug() << data;
     }
 }
+void clearLayout ( QLayout* layout )
+{
+    QLayoutItem* child;
+    while ( layout->count() != 0 ) {
+        child = layout->takeAt ( 0 );
+        if ( child->layout() != 0 ) {
+            clearLayout ( child->layout() );
+        } else if ( child->widget() != 0 ) {
+            delete child->widget();
+        }
+        delete child;
+    }
+}
 QLabel* createLabel(QString text, QWidget* parent){
+    QFont f( "Arial", 5, QFont::Bold);
     QLabel* ll = new QLabel(parent);
     ll->setText(text);
+    ll->setFont(f);
     return ll;
 }
 void MainWindow::ShowRecentTransaction(QJsonObject data){
@@ -160,6 +177,7 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
     QJsonObject recentTransaction = alltransactions.last().toObject();
     if(recentTransaction.empty()) ui->transactionText->setText("No transaction available");
     else{
+        clearLayout(ui->verticalLayout);
         for(int i=0;i<alltransactions.count();i++){
             QJsonObject transaction = alltransactions[i].toObject();
             ui->verticalLayout->addWidget(createLabel(QString("Transaction %1").arg(i),this));
