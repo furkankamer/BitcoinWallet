@@ -2,12 +2,13 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <functional>
-#include<string>
+#include <string>
+#include <ctime>
 #include <QSqlDatabase>
-#include<QNetworkReply>
-#include<QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 #include <QtSql>
-#include<QDebug>
+#include <QDebug>
 #include <QJsonObject>
 #include <QThread>
 #include <QtConcurrent>
@@ -187,9 +188,13 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
         for(int i=0;i<alltransactions.count();i++){
             QJsonObject transaction = alltransactions[i].toObject();
             QString fee = "Fee: ";
+
+            time_t transactionTime = transaction["time"].toInt();
+            char* date = ctime(&transactionTime); //Unix time conversion
+
             addRowToTable(ui->tableWidget,
-            QString("Time: ") + QString::number(transaction["time"].toVariant().toInt())
-                    + QString(" \nAddress: ") + transaction["address"].toString()
+            QString("Time: ") + QString(date)
+                    + QString("Address: ") + transaction["address"].toString()
                     + QString(" \nAmount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
                               recentTransaction["fee"].toVariant().toDouble(), 'd', 8)
                     + (transaction["fee"].toDouble() != 0 ?
@@ -198,12 +203,15 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
                     + QString(" \nTrusted: ") + (transaction["confirmations"].toInt() >= 6 ? QString("True") : QString("False")),
                     transaction["category"].toString() == "send");
         }
-        ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
+        time_t transactionTime = recentTransaction["time"].toInt();
+        char* date = ctime(&transactionTime); //Unix time conversion
+
+        ui->time->setText(QString(date));
         ui->address->setText(recentTransaction["address"].toString());
         ui->amount->setText(QString::number(recentTransaction["amount"].toVariant().toDouble() +
                             recentTransaction["fee"].toVariant().toDouble(), 'd', 8)); //amount+fee
 
-        qDebug() << "Time: " << recentTransaction["time"].toVariant().toInt();
+        qDebug() << "Time: " << date;
         qDebug() << "Address: " << recentTransaction["address"].toString();
         qDebug() << "Amount: " << recentTransaction["amount"].toVariant().toDouble();
         qDebug() << "Fee: " << recentTransaction["fee"].toVariant().toDouble();
@@ -299,6 +307,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         GetResponse("getbalances");
         GetResponse("listtransactions");
     } else if (index == 1) { //Send
+        GetResponse("getbalances");
         GetResponse("estimatesmartfee", {1008}); //Calculate conservative fee
         if(ui->label_feeRate->text().toDouble() > ui->BalanceText1->text().toDouble())
             ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble()); //Send

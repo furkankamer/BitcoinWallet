@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1105</width>
-    <height>332</height>
+    <width>1102</width>
+    <height>321</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@ text-align:center;
       <x>10</x>
       <y>20</y>
       <width>1081</width>
-      <height>281</height>
+      <height>261</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -192,9 +192,9 @@ text-align:center;
      <widget class="QGroupBox" name="transactionPanel">
       <property name="geometry">
        <rect>
-        <x>750</x>
+        <x>740</x>
         <y>0</y>
-        <width>321</width>
+        <width>331</width>
         <height>161</height>
        </rect>
       </property>
@@ -293,7 +293,7 @@ text-align:center;
         <rect>
          <x>0</x>
          <y>130</y>
-         <width>321</width>
+         <width>331</width>
          <height>21</height>
         </rect>
        </property>
@@ -303,7 +303,7 @@ text-align:center;
         </font>
        </property>
        <property name="text">
-        <string>---------------------------------------------------------</string>
+        <string>------------------------------------------------------------------------</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -330,27 +330,30 @@ text-align:center;
       <widget class="QLabel" name="time">
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>90</x>
          <y>70</y>
-         <width>211</width>
+         <width>241</width>
          <height>21</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>11</pointsize>
         </font>
        </property>
        <property name="text">
         <string>---------------------------------------------------</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
       </widget>
       <widget class="QLabel" name="amount">
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>110</x>
          <y>40</y>
-         <width>211</width>
+         <width>221</width>
          <height>21</height>
         </rect>
        </property>
@@ -380,7 +383,7 @@ text-align:center;
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>10</y>
+         <y>20</y>
          <width>181</width>
          <height>21</height>
         </rect>
@@ -397,8 +400,8 @@ text-align:center;
       <widget class="QLabel" name="BalanceText1">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>10</y>
+         <x>200</x>
+         <y>20</y>
          <width>161</width>
          <height>21</height>
         </rect>
@@ -416,7 +419,7 @@ text-align:center;
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>40</y>
+         <y>50</y>
          <width>181</width>
          <height>21</height>
         </rect>
@@ -434,7 +437,7 @@ text-align:center;
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>70</y>
+         <y>80</y>
          <width>181</width>
          <height>21</height>
         </rect>
@@ -452,7 +455,7 @@ text-align:center;
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>110</y>
          <width>181</width>
          <height>21</height>
         </rect>
@@ -469,8 +472,8 @@ text-align:center;
       <widget class="QLabel" name="BalanceText2">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>40</y>
+         <x>200</x>
+         <y>50</y>
          <width>161</width>
          <height>21</height>
         </rect>
@@ -487,8 +490,8 @@ text-align:center;
       <widget class="QLabel" name="BalanceText3">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>70</y>
+         <x>200</x>
+         <y>80</y>
          <width>161</width>
          <height>21</height>
         </rect>
@@ -505,8 +508,8 @@ text-align:center;
       <widget class="QLabel" name="BalanceText4">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>100</y>
+         <x>200</x>
+         <y>110</y>
          <width>161</width>
          <height>21</height>
         </rect>
@@ -906,7 +909,7 @@ on pages using tabs above.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1105</width>
+     <width>1102</width>
      <height>26</height>
     </rect>
    </property>
