@@ -26,9 +26,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    download-flat.png \
-    upload.jpg
+DISTFILES +=
 
 RESOURCES += \
     resources.qrc

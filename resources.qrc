@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>download-flat.png</file>
-        <file>upload.jpg</file>
         <file>download.jpg</file>
+        <file>upload.jpg</file>
     </qresource>
 </RCC>

@@ -186,14 +186,17 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
         ui->tableWidget->setRowCount(0);
         for(int i=0;i<alltransactions.count();i++){
             QJsonObject transaction = alltransactions[i].toObject();
+            QString fee = "Fee: ";
             addRowToTable(ui->tableWidget,
             QString("Time: ") + QString::number(transaction["time"].toVariant().toInt())
                     + QString(" \nAddress: ") + transaction["address"].toString()
                     + QString(" \nAmount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
                               recentTransaction["fee"].toVariant().toDouble(), 'd', 8)
-                    + QString(", Fee: ") + QString::number(transaction["fee"].toVariant().toDouble(), 'd', 8)
+                    + (transaction["fee"].toDouble() != 0 ?
+                        QString(", Fee: ") + QString::number(transaction["fee"].toVariant().toDouble(), 'd', 8) : QString(" "))
                     + QString(" \nConfirmations: ") + QString::number(transaction["confirmations"].toInt())
-                    + QString(" \nTrusted: ") + transaction["trusted"].toString(),transaction["category"].toString() == "send");
+                    + QString(" \nTrusted: ") + (transaction["confirmations"].toInt() >= 6 ? QString("True") : QString("False")),
+                    transaction["category"].toString() == "send");
         }
         ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
         ui->address->setText(recentTransaction["address"].toString());
