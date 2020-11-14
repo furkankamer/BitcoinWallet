@@ -14,6 +14,8 @@
 #include <QFuture>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QScrollArea>
+#include <QTableView>
 #define STR_SALT_KEY "12344321"
 
 using namespace std;
@@ -41,7 +43,6 @@ void MainWindow::setPixmap(QLabel* label, QString url){
     QPixmap pixmapTarget = QPixmap(url);
     pixmapTarget = pixmapTarget.scaled(100-5, 100-5, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     label->setPixmap(pixmapTarget);
-    label->hide();
     label->hide();
 }
 std::map<std::string, std::function<void(QJsonObject)>> myMap;
@@ -152,39 +153,45 @@ void MainWindow::createWallet(QJsonObject data) {
         qDebug() << data;
     }
 }
-void clearLayout ( QLayout* layout )
-{
-    QLayoutItem* child;
-    while ( layout->count() != 0 ) {
-        child = layout->takeAt ( 0 );
-        if ( child->layout() != 0 ) {
-            clearLayout ( child->layout() );
-        } else if ( child->widget() != 0 ) {
-            delete child->widget();
-        }
-        delete child;
-    }
-}
-QLabel* createLabel(QString text, QWidget* parent){
-    QFont f( "Arial", 5, QFont::Bold);
-    QLabel* ll = new QLabel(parent);
+QLabel* createLabel(QString text){
+    QFont f( "Arial", 8, QFont::Bold);
+    QLabel* ll = new QLabel();
     ll->setText(text);
     ll->setFont(f);
+    ll->adjustSize();
     return ll;
 }
+QLabel* labelWithImage(bool send){
+    QLabel* label = new QLabel();
+    QString url = send ? QString(":/upload.jpg") : QString(":/download-flat.png");
+    QPixmap pixmapTarget = QPixmap(url);
+    pixmapTarget = pixmapTarget.scaled(100-5, 30-5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    label->setPixmap(pixmapTarget);
+    return label;
+}
+void addRowToTable(QTableWidget* table,QString text, bool send){
+
+    table->insertRow(table->rowCount());
+    table->setItem(table->rowCount()-1,1,new QTableWidgetItem(text));
+    table->setCellWidget(table->rowCount()-1,0,labelWithImage(send));
+}
+
+
 void MainWindow::ShowRecentTransaction(QJsonObject data){
     QJsonArray alltransactions = data["result"].toArray();
     QJsonObject recentTransaction = alltransactions.last().toObject();
     if(recentTransaction.empty()) ui->transactionText->setText("No transaction available");
     else{
-        clearLayout(ui->verticalLayout);
+        ui->tableWidget->setRowCount(0);
         for(int i=0;i<alltransactions.count();i++){
             QJsonObject transaction = alltransactions[i].toObject();
-            ui->verticalLayout->addWidget(createLabel(QString("Transaction %1").arg(i),this));
-            ui->verticalLayout->addWidget(createLabel(QString("Time: ") + QString::number(transaction["time"].toVariant().toInt()),this));
-            ui->verticalLayout->addWidget(createLabel(QString("Address: ") + transaction["address"].toString(),this));
-            ui->verticalLayout->addWidget(createLabel(QString("Amount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
-                                                      recentTransaction["fee"].toVariant().toDouble(), 'd', 8),this));
+            addRowToTable(ui->tableWidget,
+            QString("Time: ") + QString::number(transaction["time"].toVariant().toInt())
+                    + QString(", Address: ") + transaction["address"].toString()
+                    + QString(", Amount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
+                              recentTransaction["fee"].toVariant().toDouble(), 'd', 8)
+                    + QString(", Confirmations: ") + QString::number(transaction["confirmations"].toInt())
+                    + QString(", Trusted: ") + transaction["trusted"].toString(),transaction["category"].toString() == "send");
         }
         ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
         ui->address->setText(recentTransaction["address"].toString());
@@ -293,6 +300,41 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         else ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble() - ui->label_feeRate->text().toDouble());
     } else if (index == 3){//listtransactions
         GetResponse("listtransactions");
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
+        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
     }
 }
 
