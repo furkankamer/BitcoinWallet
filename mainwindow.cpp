@@ -300,41 +300,6 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         else ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble() - ui->label_feeRate->text().toDouble());
     } else if (index == 3){//listtransactions
         GetResponse("listtransactions");
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
-        addRowToTable(ui->tableWidget,"asdfasdfasdfasdfasdfasdfasdfadsad",true);
     }
 }
 
