@@ -161,10 +161,11 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
     if(recentTransaction.empty()) ui->transactionText->setText("No transaction available");
     else{
         for(int i=0;i<alltransactions.count();i++){
+            QJsonObject transaction = alltransactions[i].toObject();
             ui->verticalLayout->addWidget(createLabel(QString("Transaction %d").arg(i),this));
-            ui->verticalLayout->addWidget(createLabel(QString("Time: ") + QString::number(recentTransaction["time"].toVariant().toInt()),this));
-            ui->verticalLayout->addWidget(createLabel(QString("Address: ") + recentTransaction["address"].toString(),this));
-            ui->verticalLayout->addWidget(createLabel(QString("Amount: ") + QString::number(recentTransaction["amount"].toVariant().toDouble() +
+            ui->verticalLayout->addWidget(createLabel(QString("Time: ") + QString::number(transaction["time"].toVariant().toInt()),this));
+            ui->verticalLayout->addWidget(createLabel(QString("Address: ") + transaction["address"].toString(),this));
+            ui->verticalLayout->addWidget(createLabel(QString("Amount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
                                                       recentTransaction["fee"].toVariant().toDouble(), 'd', 8),this));
         }
         ui->time->setText(QString::number(recentTransaction["time"].toVariant().toInt()));
@@ -184,7 +185,7 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
 
 void MainWindow::estimateFee(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
-    if (result["feerate"] != NULL) {
+    if (result["feerate"].isNull()) {
         ui->label_feeRate->setText(QString::number(result["feerate"].toVariant().toDouble(), 'd', 8));
     } else {
         qDebug() << "Error when estimating fee.";
@@ -268,7 +269,7 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         GetResponse("getbalances");
         GetResponse("listtransactions");
     } else if (index == 1) { //Send
-        GetResponse("estimatesmartfee", {2}); //Calculate conservative fee
+        GetResponse("estimatesmartfee", {1008}); //Calculate conservative fee
         if(ui->label_feeRate->text().toDouble() > ui->BalanceText1->text().toDouble())
             ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble()); //Send
         else ui->sendBitcoinAmount->setMaximum(ui->BalanceText1->text().toDouble() - ui->label_feeRate->text().toDouble());
@@ -298,9 +299,9 @@ void MainWindow::on_signIn_clicked()
         //Loading existing wallet
         GetResponse("loadwallet", {QString(username).toStdString().c_str()});
         ui->tabWidget->setCurrentIndex(5);
-        GetResponse("estimatesmartfee", {2});
+        GetResponse("estimatesmartfee", {1008});
         if(ui->label_feeRate->text() == "")
-            ui->label_feeRate->setText("0.00120000");
+            ui->label_feeRate->setText("0.000010000");
     }
     else{
         ui->Information->show();
