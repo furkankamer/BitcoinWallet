@@ -123,15 +123,9 @@ void MainWindow::showBalances(QJsonObject data){
     qDebug() << ok;
 }
 
-void MainWindow::loadWallet(QJsonObject data) {
-    QJsonObject result = data["result"].toObject();
-    if (result["warning"].toString() != "") { //We must create a new wallet for the user
-        qDebug() << "Creating wallet: " << current_user;
-        GetResponse("createwallet",{ current_user.toStdString().c_str()});
-    } else { //The existing wallet loaded successfully
+void MainWindow::loadWallet(QJsonObject data) {//The existing wallet loaded successfully
         qDebug() << "Wallet loaded: " << current_user;
         URL = "http://localhost:8332/wallet/" + current_user;
-    }
 }
 
 void MainWindow::setNewBitcoinAddress(QJsonObject data){
@@ -275,6 +269,8 @@ void MainWindow::GetResponse(std::string method,QJsonArray params = {}){
                     callFunction(method,QJsonDocument::fromJson(contents.toUtf8()).object());
                 }
                 else{
+                    if(method == "loadwallet")
+                        GetResponse("createwallet",{current_user});
                     QString err = reply->errorString();
                     qDebug() << err;
                 }
