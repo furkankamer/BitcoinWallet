@@ -162,7 +162,7 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
     else{
         for(int i=0;i<alltransactions.count();i++){
             QJsonObject transaction = alltransactions[i].toObject();
-            ui->verticalLayout->addWidget(createLabel(QString("Transaction %d").arg(i),this));
+            ui->verticalLayout->addWidget(createLabel(QString("Transaction %1").arg(i),this));
             ui->verticalLayout->addWidget(createLabel(QString("Time: ") + QString::number(transaction["time"].toVariant().toInt()),this));
             ui->verticalLayout->addWidget(createLabel(QString("Address: ") + transaction["address"].toString(),this));
             ui->verticalLayout->addWidget(createLabel(QString("Amount: ") + QString::number(transaction["amount"].toVariant().toDouble() +
@@ -185,7 +185,7 @@ void MainWindow::ShowRecentTransaction(QJsonObject data){
 
 void MainWindow::estimateFee(QJsonObject data) {
     QJsonObject result = data["result"].toObject();
-    if (result["feerate"].isNull()) {
+    if (!result["feerate"].isNull()) {
         ui->label_feeRate->setText(QString::number(result["feerate"].toVariant().toDouble(), 'd', 8));
     } else {
         qDebug() << "Error when estimating fee.";
