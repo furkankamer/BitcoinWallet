@@ -295,6 +295,8 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
         ui->userText->setText("");
         ui->passText->setText("");
         ui->tabWidget->setCurrentIndex(0);
+        ui->sendBitcoinAddress->setText("");
+        ui->sendBitcoinAmount->setValue(0.0);
     }
 
     if(username == NULL)
